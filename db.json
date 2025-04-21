@@ -1,0 +1,105 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "natalia_d",
+      "email": "natalia@example.com",
+      "password": "password123",
+      "role": "admin",
+      "name": "Natalia Dyer",
+      "avatar": "https://www.celebsfirst.com/wp-content/uploads/2019/11/natalia-dyer-attends-a-screening-of-stranger-things-season-3-at-dga-theater-in-new-york-city-111119_4.jpg"
+    },
+    {
+      "id": 2,
+      "username": "sadie_sink",
+      "email": "sadie@example.com",
+      "password": "password123",
+      "role": "editor",
+      "name": "Sadie Sink",
+      "avatar": "https://www.celebsfirst.com/wp-content/uploads/2022/11/sadie-sink-attends-the-premiere-of-dear-zoe-in-pittsburgh-pennsylvania-021122_1.jpg"
+    },
+    {
+      "id": 3,
+      "username": "anne_h",
+      "email": "anne@example.com",
+      "password": "password123",
+      "role": "viewer",
+      "name": "Anne Hathaway",
+      "avatar": "https://www.celebsfirst.com/wp-content/uploads/2024/02/Anne-Hathaway-attends-the-30th-Annual-Screen-Actors-Guild-Awards-at-the-Shrine-Auditorium-in-Los-Angeles-240224_3.jpg"
+    },
+    {
+      "id": 4,
+      "username": "emilia_jones",
+      "email": "emilia@example.com",
+      "password": "password123",
+      "role": "editor",
+      "name": "Emilia Jones",
+      "avatar": "https://www.celebsfirst.com/wp-content/uploads/2024/01/Emilia-Jones-attends-the-Premiere-of-Winner-during-the-2024-Sundance-Film-Festival-Park-City-Utah-200124_4.jpg"
+    }
+  ],
+  "templates": [
+    {
+      "id": 1,
+      "title": "Modern Homepage",
+      "slug": "homepage",
+      "type": "static",
+      "htmlContent": "<h1>Explore Our New Look</h1><p>A stunning homepage experience.</p>",
+      "bannerImage": "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    },
+    {
+      "id": 2,
+      "title": "Creative Blog",
+      "slug": "blog",
+      "type": "dynamic",
+      "htmlContent": "<h1>Latest Stories</h1><div id='blog-content'></div>",
+      "bannerImage": "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    },
+    {
+      "id": 3,
+      "title": "Contact Page",
+      "slug": "contact",
+      "type": "static",
+      "htmlContent": "<h2>Get in Touch</h2><p>We'd love to hear from you.</p>",
+      "bannerImage": "https://images.pexels.com/photos/3184421/pexels-photo-3184421.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    }
+  ],
+  "menus": [
+    {
+      "id": 1,
+      "title": "Main Navigation",
+      "type": "list",
+      "status": "active",
+      "templateId": 1
+    },
+    {
+      "id": 2,
+      "title": "Footer Links",
+      "type": "list",
+      "status": "active",
+      "templateId": 2
+    }
+  ],
+  "forms": [
+    {
+      "name": "Contact Form",
+      "fields": [],
+      "id": 1
+    },
+    {
+      "name": "Newsletter Signup",
+      "fields": [],
+      "id": 2
+    },
+    {
+      "name": "Feedback Form",
+      "fields": [],
+      "id": 3
+    }
+  ],
+  "submissions": [],
+  "settings": {
+    "theme": "light",
+    "font": "Roboto",
+    "logo": "https://via.placeholder.com/150x50"
+  }
+}
