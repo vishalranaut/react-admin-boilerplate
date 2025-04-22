@@ -58,33 +58,44 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
   };
 
   return (
-    <MainLayout title="Template Form">
-      <Card>
+    <MainLayout title="Add Template Form">
+      <Card className="shadow-sm mb-4">
         <Card.Body>
-          <h2>{isEditMode ? "Edit Template" : "Create Template"}</h2>
+          {error && (
+            <Alert variant="danger" className="mb-4">
+              {error}
+            </Alert>
+          )}
+          {loading && (
+            <div className="text-center mb-4">
+              <Spinner animation="border" variant="primary" />
+            </div>
+          )}
 
           <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="title">
+            <Form.Group controlId="title" className="mb-3">
               <Form.Label>Title</Form.Label>
               <Form.Control
                 type="text"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
+                placeholder="Enter template title"
               />
             </Form.Group>
 
-            <Form.Group controlId="slug">
+            <Form.Group controlId="slug" className="mb-3">
               <Form.Label>Slug</Form.Label>
               <Form.Control
                 type="text"
                 name="slug"
                 value={formData.slug}
                 onChange={handleChange}
+                placeholder="Enter template slug"
               />
             </Form.Group>
 
-            <Form.Group controlId="type">
+            <Form.Group controlId="type" className="mb-3">
               <Form.Label>Type</Form.Label>
               <Form.Control
                 as="select"
@@ -97,40 +108,47 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
               </Form.Control>
             </Form.Group>
 
-            <Form.Group controlId="htmlContent">
+            <Form.Group controlId="htmlContent" className="mb-3">
               <Form.Label>HTML Content</Form.Label>
               <Form.Control
                 as="textarea"
                 name="htmlContent"
                 value={formData.htmlContent}
                 onChange={handleChange}
+                rows={6}
+                placeholder="Enter HTML content"
               />
             </Form.Group>
 
-            <Form.Group controlId="bannerImage">
+            <Form.Group controlId="bannerImage" className="mb-4">
               <Form.Label>Banner Image URL</Form.Label>
               <Form.Control
                 type="text"
                 name="bannerImage"
                 value={formData.bannerImage}
                 onChange={handleChange}
+                placeholder="Enter banner image URL"
               />
             </Form.Group>
 
-            {error && <Alert variant="danger">{error}</Alert>}
-
-            {loading && <Spinner animation="border" variant="primary" />}
-
-            <Button
-              variant="secondary"
-              onClick={onCancel}
-              style={{ marginRight: "10px" }}
-            >
-              Cancel
-            </Button>
-            <Button variant="primary" type="submit">
-              {isEditMode ? "Update" : "Create"}
-            </Button>
+            <div className="d-flex justify-content-between">
+              <Button
+                variant="secondary"
+                onClick={onCancel}
+                disabled={loading}
+                className="px-4"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                type="submit"
+                disabled={loading}
+                className="px-4"
+              >
+                {isEditMode ? "Update" : "Create"}
+              </Button>
+            </div>
           </Form>
         </Card.Body>
       </Card>

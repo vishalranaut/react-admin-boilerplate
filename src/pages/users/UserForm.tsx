@@ -1,10 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Form, Button, Card, Alert, Row, Col } from 'react-bootstrap';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import MainLayout from '../../layout/MainLayout';
-import api from '../../services/api';
+import { Form, Button, Card, Alert, Row, Col } from "react-bootstrap";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import MainLayout from "../../layout/MainLayout";
 
 interface UserFormValues {
   username: string;
@@ -16,108 +13,48 @@ interface UserFormValues {
   avatar: string;
 }
 
-const UserForm = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const isEditMode = Boolean(id);
-  
-  const [initialValues, setInitialValues] = useState<UserFormValues>({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    name: '',
-    role: 'editor',
-    avatar: '',
-  });
-  
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  useEffect(() => {
-    const fetchUser = async () => {
-      if (!isEditMode) return;
-      
-      try {
-        setLoading(true);
-        const response = await api.get(`/users/${id}`);
-        const userData = response.data;
-        
-        setInitialValues({
-          username: userData.username || '',
-          email: userData.email || '',
-          password: '',
-          confirmPassword: '',
-          name: userData.name || '',
-          role: userData.role || 'editor',
-          avatar: userData.avatar || '',
-        });
-      } catch (err) {
-        setError('Failed to load user data');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchUser();
-  }, [id, isEditMode]);
-  
+interface UserFormProps {
+  isEditMode: boolean;
+  initialValues: UserFormValues;
+  loading: boolean;
+  error: string | null;
+  onSubmit: (values: UserFormValues) => void;
+  onCancel: () => void;
+}
+
+const UserForm = ({
+  isEditMode,
+  initialValues,
+  loading,
+  error,
+  onSubmit,
+  onCancel,
+}: UserFormProps) => {
   const validationSchema = Yup.object({
     username: Yup.string()
-      .required('Username is required')
-      .min(3, 'Username must be at least 3 characters'),
+      .required("Username is required")
+      .min(3, "Username must be at least 3 characters"),
     email: Yup.string()
-      .email('Invalid email address')
-      .required('Email is required'),
+      .email("Invalid email address")
+      .required("Email is required"),
     password: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
-      .when('$isEditMode', {
+      .min(6, "Password must be at least 6 characters")
+      .when("$isEditMode", {
         is: false,
-        then: schema => schema.required('Password is required'),
+        then: (schema) => schema.required("Password is required"),
       }),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password')], 'Passwords must match')
-      .when('password', {
+      .oneOf([Yup.ref("password")], "Passwords must match")
+      .when("password", {
         is: (val: string) => val && val.length > 0,
-        then: schema => schema.required('Please confirm your password'),
+        then: (schema) => schema.required("Please confirm your password"),
       }),
-    name: Yup.string()
-      .required('Name is required'),
-    role: Yup.string()
-      .required('Role is required'),
+    name: Yup.string().required("Name is required"),
+    role: Yup.string().required("Role is required"),
   });
-  
-  const handleSubmit = async (values: UserFormValues) => {
-    const { confirmPassword, ...userData } = values;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      if (isEditMode) {
-        // If password is empty in edit mode, don't send it
-        if (!userData.password) {
-          const { password, ...userDataWithoutPassword } = userData;
-          await api.patch(`/users/${id}`, userDataWithoutPassword);
-        } else {
-          await api.patch(`/users/${id}`, userData);
-        }
-      } else {
-        await api.post('/users', userData);
-      }
-      
-      navigate('/users');
-    } catch (err) {
-      setError(`Failed to ${isEditMode ? 'update' : 'create'} user`);
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
+
   return (
-    <MainLayout title={isEditMode ? 'Edit User' : 'Add New User'}>
+    <MainLayout title={isEditMode ? "Edit User" : "Add New User"}>
       <div className="page-fade-in">
         <Card className="border-0 shadow-sm">
           <Card.Body>
@@ -130,11 +67,10 @@ const UserForm = () => {
             ) : (
               <>
                 {error && <Alert variant="danger">{error}</Alert>}
-                
                 <Formik
                   initialValues={initialValues}
                   validationSchema={validationSchema}
-                  onSubmit={handleSubmit}
+                  onSubmit={onSubmit}
                   enableReinitialize
                   validateOnChange={false}
                   validateOnBlur={true}
@@ -167,7 +103,6 @@ const UserForm = () => {
                             </Form.Control.Feedback>
                           </Form.Group>
                         </Col>
-                        
                         <Col md={6}>
                           <Form.Group className="mb-3">
                             <Form.Label>Email</Form.Label>
@@ -186,12 +121,13 @@ const UserForm = () => {
                           </Form.Group>
                         </Col>
                       </Row>
-                      
                       <Row>
                         <Col md={6}>
                           <Form.Group className="mb-3">
                             <Form.Label>
-                              {isEditMode ? 'New Password (leave blank to keep current)' : 'Password'}
+                              {isEditMode
+                                ? "New Password (leave blank to keep current)"
+                                : "Password"}
                             </Form.Label>
                             <Form.Control
                               type="password"
@@ -200,14 +136,17 @@ const UserForm = () => {
                               onChange={handleChange}
                               onBlur={handleBlur}
                               isInvalid={touched.password && !!errors.password}
-                              placeholder={isEditMode ? 'Enter new password' : 'Enter password'}
+                              placeholder={
+                                isEditMode
+                                  ? "Enter new password"
+                                  : "Enter password"
+                              }
                             />
                             <Form.Control.Feedback type="invalid">
                               {errors.password}
                             </Form.Control.Feedback>
                           </Form.Group>
                         </Col>
-                        
                         <Col md={6}>
                           <Form.Group className="mb-3">
                             <Form.Label>Confirm Password</Form.Label>
@@ -217,7 +156,10 @@ const UserForm = () => {
                               value={values.confirmPassword}
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              isInvalid={touched.confirmPassword && !!errors.confirmPassword}
+                              isInvalid={
+                                touched.confirmPassword &&
+                                !!errors.confirmPassword
+                              }
                               placeholder="Confirm password"
                             />
                             <Form.Control.Feedback type="invalid">
@@ -226,7 +168,6 @@ const UserForm = () => {
                           </Form.Group>
                         </Col>
                       </Row>
-                      
                       <Row>
                         <Col md={6}>
                           <Form.Group className="mb-3">
@@ -245,7 +186,6 @@ const UserForm = () => {
                             </Form.Control.Feedback>
                           </Form.Group>
                         </Col>
-                        
                         <Col md={6}>
                           <Form.Group className="mb-3">
                             <Form.Label>Role</Form.Label>
@@ -266,7 +206,6 @@ const UserForm = () => {
                           </Form.Group>
                         </Col>
                       </Row>
-                      
                       <Form.Group className="mb-3">
                         <Form.Label>Avatar URL</Form.Label>
                         <Form.Control
@@ -281,7 +220,6 @@ const UserForm = () => {
                           Leave blank to use the default avatar
                         </Form.Text>
                       </Form.Group>
-                      
                       <div className="d-flex gap-2">
                         <Button
                           variant="primary"
@@ -290,18 +228,20 @@ const UserForm = () => {
                         >
                           {loading ? (
                             <>
-                              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                              {isEditMode ? 'Saving...' : 'Creating...'}
+                              <span
+                                className="spinner-border spinner-border-sm me-2"
+                                role="status"
+                                aria-hidden="true"
+                              ></span>
+                              {isEditMode ? "Saving..." : "Creating..."}
                             </>
+                          ) : isEditMode ? (
+                            "Save Changes"
                           ) : (
-                            isEditMode ? 'Save Changes' : 'Create User'
+                            "Create User"
                           )}
                         </Button>
-                        
-                        <Button
-                          variant="outline-secondary"
-                          onClick={() => navigate('/users')}
-                        >
+                        <Button variant="outline-secondary" onClick={onCancel}>
                           Cancel
                         </Button>
                       </div>

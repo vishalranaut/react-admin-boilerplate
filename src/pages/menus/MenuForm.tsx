@@ -28,12 +28,18 @@ const MenuForm: React.FC<MenuFormProps> = ({
 }) => {
   return (
     <MainLayout title="Menu Form">
-      <Card>
+      <Card className="shadow-sm mb-4">
         <Card.Body>
-          <h2>{isEditMode ? "Edit Menu" : "Create Menu"}</h2>
-
-          {error && <Alert variant="danger">{error}</Alert>}
-          {loading && <Spinner animation="border" variant="primary" />}
+          {error && (
+            <Alert variant="danger" className="mb-4">
+              {error}
+            </Alert>
+          )}
+          {loading && (
+            <div className="text-center mb-4">
+              <Spinner animation="border" variant="primary" />
+            </div>
+          )}
 
           <Form
             onSubmit={(e) => {
@@ -41,7 +47,7 @@ const MenuForm: React.FC<MenuFormProps> = ({
               onSubmit(initialValues);
             }}
           >
-            <Form.Group controlId="title">
+            <Form.Group controlId="title" className="mb-3">
               <Form.Label>Title</Form.Label>
               <Form.Control
                 type="text"
@@ -49,10 +55,11 @@ const MenuForm: React.FC<MenuFormProps> = ({
                 value={initialValues.title || ""}
                 onChange={onChange}
                 disabled={loading}
+                placeholder="Enter menu title"
               />
             </Form.Group>
 
-            <Form.Group controlId="type">
+            <Form.Group controlId="type" className="mb-3">
               <Form.Label>Type</Form.Label>
               <Form.Control
                 as="select"
@@ -66,7 +73,7 @@ const MenuForm: React.FC<MenuFormProps> = ({
               </Form.Control>
             </Form.Group>
 
-            <Form.Group controlId="status">
+            <Form.Group controlId="status" className="mb-3">
               <Form.Label>Status</Form.Label>
               <Form.Control
                 as="select"
@@ -80,7 +87,7 @@ const MenuForm: React.FC<MenuFormProps> = ({
               </Form.Control>
             </Form.Group>
 
-            <Form.Group controlId="templateId">
+            <Form.Group controlId="templateId" className="mb-4">
               <Form.Label>Template</Form.Label>
               <Form.Control
                 as="select"
@@ -98,17 +105,24 @@ const MenuForm: React.FC<MenuFormProps> = ({
               </Form.Control>
             </Form.Group>
 
-            <Button
-              variant="secondary"
-              onClick={onCancel}
-              style={{ marginRight: "10px" }}
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-            <Button variant="primary" type="submit" disabled={loading}>
-              {isEditMode ? "Update" : "Create"}
-            </Button>
+            <div className="d-flex justify-content-between">
+              <Button
+                variant="secondary"
+                onClick={onCancel}
+                disabled={loading}
+                className="px-4"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                type="submit"
+                disabled={loading}
+                className="px-4"
+              >
+                {isEditMode ? "Update" : "Create"}
+              </Button>
+            </div>
           </Form>
         </Card.Body>
       </Card>

@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Card,
-  Table,
   Button,
   Spinner,
   Form,
@@ -73,14 +72,13 @@ const UsersList: React.FC<UsersListProps> = ({
               </div>
             ) : (
               <div className="table-responsive">
-                <Table hover>
+                <table className="table align-middle">
                   <thead>
                     <tr>
-                      <th>Avatar</th>
-                      <th>Name</th>
-                      <th>Username</th>
-                      <th>Email</th>
+                      <th style={{ width: "50px" }}></th>
+                      <th>User Details</th>
                       <th>Role</th>
+                      <th>Status</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -88,18 +86,33 @@ const UsersList: React.FC<UsersListProps> = ({
                     {users.map((user) => (
                       <tr key={user.id}>
                         <td>
-                          <img
-                            src={
-                              user.avatar ||
-                              "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=300"
-                            }
-                            alt={user.name}
-                            className="avatar"
-                          />
+                          <div
+                            className="rounded-circle overflow-hidden"
+                            style={{
+                              width: "40px",
+                              height: "40px",
+                              border: "2px solid #e9ecef",
+                            }}
+                          >
+                            <img
+                              src={
+                                user.avatar ||
+                                "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=300"
+                              }
+                              alt={user.name}
+                              className="w-100 h-100 object-fit-cover"
+                            />
+                          </div>
                         </td>
-                        <td>{user.name}</td>
-                        <td>{user.username}</td>
-                        <td>{user.email}</td>
+                        <td>
+                          <div className="d-flex flex-column">
+                            <span className="fw-bold">{user.name}</span>
+                            <small className="text-muted">
+                              @{user.username}
+                            </small>
+                            <small className="text-muted">{user.email}</small>
+                          </div>
+                        </td>
                         <td>
                           <Badge
                             bg={
@@ -107,64 +120,104 @@ const UsersList: React.FC<UsersListProps> = ({
                                 ? "danger"
                                 : user.role === "editor"
                                 ? "primary"
-                                : "warning"
+                                : "secondary"
                             }
+                            className="text-uppercase"
                           >
                             {user.role}
                           </Badge>
                         </td>
                         <td>
-                          <Button
-                            as={Link as any}
-                            to={`/users/edit/${user.id}`}
-                            variant="outline-primary"
-                            size="sm"
-                            className="me-2"
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => onDeleteClick(user.id)}
-                          >
-                            Delete
-                          </Button>
+                          <Badge bg="success" className="px-3 py-2">
+                            {user.status}
+                          </Badge>
+                        </td>
+                        <td>
+                          <div className="d-flex gap-2">
+                            <Button
+                              as={Link as any}
+                              to={`/users/edit/${user.id}`}
+                              variant="outline-primary"
+                              size="sm"
+                              className="d-flex align-items-center"
+                            >
+                              <i className="bi bi-pencil me-1"></i>
+                              Edit
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => onDeleteClick(user.id)}
+                              className="d-flex align-items-center"
+                            >
+                              <i className="bi bi-trash me-1"></i>
+                              Delete
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))}
 
                     {users.length === 0 && (
                       <tr>
-                        <td colSpan={6} className="text-center py-5">
-                          {searchTerm
-                            ? "No users found matching your search."
-                            : "No users found."}
+                        <td colSpan={5} className="text-center py-5">
+                          <div className="d-flex flex-column align-items-center">
+                            <i
+                              className="bi bi-people text-muted mb-3"
+                              style={{ fontSize: "2rem" }}
+                            ></i>
+                            <p className="text-muted mb-0">
+                              {searchTerm
+                                ? "No users found matching your search."
+                                : "No users found."}
+                            </p>
+                          </div>
                         </td>
                       </tr>
                     )}
                   </tbody>
-                </Table>
+                </table>
               </div>
             )}
           </Card.Body>
         </Card>
 
-        {/* Delete Confirmation Modal */}
         <Modal show={showDeleteModal} onHide={onCloseDeleteModal}>
           <Modal.Header closeButton>
             <Modal.Title>Confirm Delete</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            Are you sure you want to delete{" "}
-            <strong>{userToDelete?.name}</strong>? This action cannot be undone.
+            <div className="text-center mb-4">
+              <div
+                className="rounded-circle overflow-hidden mx-auto mb-3"
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  border: "3px solid #e9ecef",
+                }}
+              >
+                <img
+                  src={
+                    userToDelete?.avatar ||
+                    "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=300"
+                  }
+                  alt={userToDelete?.name}
+                  className="w-100 h-100 object-fit-cover"
+                />
+              </div>
+              <p className="mb-1">Are you sure you want to delete</p>
+              <p className="fw-bold mb-0">{userToDelete?.name}</p>
+              <small className="text-muted">
+                This action cannot be undone.
+              </small>
+            </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={onCloseDeleteModal}>
+            <Button variant="outline-secondary" onClick={onCloseDeleteModal}>
               Cancel
             </Button>
             <Button variant="danger" onClick={onDeleteConfirm}>
-              Delete
+              Delete User
             </Button>
           </Modal.Footer>
         </Modal>

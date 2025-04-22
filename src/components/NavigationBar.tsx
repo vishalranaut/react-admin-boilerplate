@@ -1,8 +1,8 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { Navbar, Container, Nav, NavDropdown, Button } from 'react-bootstrap';
-import { RootState } from '../store';
-import { logout } from '../store/reducers/authSlice';
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { Navbar, Container, Nav, Image, Dropdown } from "react-bootstrap";
+import { RootState } from "../store";
+import { logout } from "../store/reducers/authSlice";
 
 const NavigationBar = () => {
   const dispatch = useDispatch();
@@ -11,48 +11,61 @@ const NavigationBar = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    navigate("/login");
   };
 
+  const avatarUrl =
+    user?.avatar ||
+    "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100";
+
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
-      <Container fluid>
-        <Navbar.Brand as={Link} to="/dashboard">Admin Panel</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
-            <Nav.Link as={Link} to="/users">Users</Nav.Link>
-            <NavDropdown title="Pages" id="pages-dropdown">
-              <NavDropdown.Item as={Link} to="/templates">Templates</NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/menus">Menus</NavDropdown.Item>
-            </NavDropdown>
-            <Nav.Link as={Link} to="/forms">Forms</Nav.Link>
-            <Nav.Link as={Link} to="/settings">Settings</Nav.Link>
-          </Nav>
-          <Nav>
-            {user && (
-              <NavDropdown 
-                title={
-                  <div className="d-inline-block">
-                    <img 
-                      src={user.avatar || 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300'} 
-                      alt="User" 
-                      className="avatar me-2" 
-                    />
-                    <span>{user.name}</span>
-                  </div>
-                } 
-                id="user-dropdown"
-              >
-                <NavDropdown.Item as={Link} to="/profile">Profile</NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/change-password">Change Password</NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item as={Button} onClick={handleLogout}>Logout</NavDropdown.Item>
-              </NavDropdown>
-            )}
-          </Nav>
-        </Navbar.Collapse>
+    <Navbar
+      bg="dark"
+      variant="dark"
+      fixed="top"
+      className="px-3 shadow-sm"
+      style={{ height: "56px", zIndex: 1050 }}
+    >
+      <Container
+        fluid
+        className="d-flex justify-content-between align-items-center"
+      >
+        <Navbar.Brand as={Link} to="/dashboard" className="fw-semibold">
+          Admin Panel
+        </Navbar.Brand>
+
+        {user && (
+          <Dropdown align="end">
+            <Dropdown.Toggle
+              variant="link"
+              bsPrefix="p-0 border-0 bg-transparent"
+              id="dropdown-user"
+              className="d-flex align-items-center text-white"
+            >
+              <Image
+                src={avatarUrl}
+                roundedCircle
+                width={32}
+                height={32}
+                className="me-2"
+                style={{ objectFit: "cover" }}
+                alt="User avatar"
+              />
+              <span className="d-none d-sm-inline">{user.name}</span>
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              <Dropdown.Item as={Link} to="/profile">
+                Profile
+              </Dropdown.Item>
+              <Dropdown.Item as={Link} to="/change-password">
+                Change Password
+              </Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        )}
       </Container>
     </Navbar>
   );

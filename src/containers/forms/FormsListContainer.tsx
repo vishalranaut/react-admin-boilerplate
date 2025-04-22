@@ -7,6 +7,7 @@ interface FormData {
   id: number;
   name: string;
   email: string;
+  status: string;
   message: string;
 }
 
@@ -16,7 +17,7 @@ const FormsListContainer = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [formToDelete, setFormToDelete] = useState<number | null>(null);
+  const [formToDelete, setFormToDelete] = useState<FormData | null>(null);
 
   const navigate = useNavigate();
 
@@ -37,7 +38,8 @@ const FormsListContainer = () => {
   };
 
   const handleDeleteClick = (formId: number) => {
-    setFormToDelete(formId);
+    const form = forms.find((f) => f.id === formId) || null;
+    setFormToDelete(form);
     setShowDeleteModal(true);
   };
 
@@ -45,9 +47,10 @@ const FormsListContainer = () => {
     if (!formToDelete) return;
 
     try {
-      await api.delete(`/forms/${formToDelete}`);
-      setForms(forms.filter((form) => form.id !== formToDelete));
+      await api.delete(`/forms/${formToDelete.id}`);
+      setForms(forms.filter((form) => form.id !== formToDelete.id));
       setShowDeleteModal(false);
+      setFormToDelete(null);
     } catch (err) {
       setError("Failed to delete form");
     }
@@ -57,8 +60,11 @@ const FormsListContainer = () => {
     navigate("/forms/add");
   };
 
-  const filteredForms = forms.filter((form) =>
-    form.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredForms = forms.filter(
+    (form) =>
+      form.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      form.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      form.message.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -68,6 +74,7 @@ const FormsListContainer = () => {
       error={error}
       searchTerm={searchTerm}
       showDeleteModal={showDeleteModal}
+      formToDelete={formToDelete}
       onSearchChange={(e) => setSearchTerm(e.target.value)}
       onDeleteClick={handleDeleteClick}
       onDeleteConfirm={handleDeleteConfirm}

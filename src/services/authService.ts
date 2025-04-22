@@ -1,4 +1,4 @@
-import api from './api';
+import api from "./api";
 
 // Types
 export interface User {
@@ -8,6 +8,7 @@ export interface User {
   role: string;
   name: string;
   avatar?: string;
+  status: string;
 }
 
 export interface LoginCredentials {
@@ -28,50 +29,52 @@ const authService = {
     try {
       // In a real app, this would be a POST request
       // For our mock API, we'll simulate auth by fetching users and matching credentials
-      const response = await api.get('/users');
+      const response = await api.get("/users");
       const users = response.data;
-      
+
       // Find user with matching credentials
       const user = users.find(
-        (u: any) => 
-          u.username === credentials.username && 
+        (u: any) =>
+          u.username === credentials.username &&
           u.password === credentials.password
       );
-      
+
       if (!user) {
-        throw new Error('Invalid credentials');
+        throw new Error("Invalid credentials");
       }
-      
+
       // Remove password from user object
       const { password, ...userWithoutPassword } = user;
-      
+
       // In a real app, the server would generate a token
       // Here we'll just create a fake token
-      const token = btoa(JSON.stringify({
-        id: user.id,
-        username: user.username,
-        role: user.role
-      }));
-      
+      const token = btoa(
+        JSON.stringify({
+          id: user.id,
+          username: user.username,
+          role: user.role,
+        })
+      );
+
       // Store token and user in localStorage
-      localStorage.setItem('authToken', token);
-      localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-      
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("user", JSON.stringify(userWithoutPassword));
+
       return userWithoutPassword;
     } catch (error) {
       throw error;
     }
   },
-  
+
   // Logout function
   logout: () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("user");
   },
-  
+
   // Get current user
   getCurrentUser: (): User | null => {
-    const userStr = localStorage.getItem('user');
+    const userStr = localStorage.getItem("user");
     if (!userStr) return null;
     try {
       return JSON.parse(userStr);
@@ -79,47 +82,56 @@ const authService = {
       return null;
     }
   },
-  
+
   // Check if user is authenticated
   isAuthenticated: (): boolean => {
-    return !!localStorage.getItem('authToken');
+    return !!localStorage.getItem("authToken");
   },
-  
+
   // Update profile
-  updateProfile: async (userId: number, userData: Partial<User>): Promise<User> => {
+  updateProfile: async (
+    userId: number,
+    userData: Partial<User>
+  ): Promise<User> => {
     const response = await api.patch(`/users/${userId}`, userData);
-    
+
     // Update user in localStorage
     const currentUser = authService.getCurrentUser();
     if (currentUser && currentUser.id === userId) {
-      localStorage.setItem('user', JSON.stringify({
-        ...currentUser,
-        ...response.data
-      }));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          ...currentUser,
+          ...response.data,
+        })
+      );
     }
-    
+
     return response.data;
   },
-  
+
   // Change password
-  changePassword: async (userId: number, passwordData: ChangePasswordData): Promise<void> => {
+  changePassword: async (
+    userId: number,
+    passwordData: ChangePasswordData
+  ): Promise<void> => {
     // First verify current password
     const response = await api.get(`/users/${userId}`);
     const user = response.data;
-    
+
     if (user.password !== passwordData.currentPassword) {
-      throw new Error('Current password is incorrect');
+      throw new Error("Current password is incorrect");
     }
-    
+
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      throw new Error('New passwords do not match');
+      throw new Error("New passwords do not match");
     }
-    
+
     // Update password
     await api.patch(`/users/${userId}`, {
-      password: passwordData.newPassword
+      password: passwordData.newPassword,
     });
-  }
+  },
 };
 
 export default authService;

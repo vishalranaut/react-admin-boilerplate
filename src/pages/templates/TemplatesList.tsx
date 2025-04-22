@@ -7,10 +7,8 @@ import {
   Spinner,
   Form,
   InputGroup,
-  Row,
-  Col,
   Modal,
-  ListGroup,
+  Table,
   Alert,
 } from "react-bootstrap";
 
@@ -47,57 +45,62 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
   );
 
   return (
-    <MainLayout title="Templates Management">
+    <MainLayout title="Templates">
       <div className="page-fade-in">
-        <Row className="mb-4 align-items-center">
-          <Col md={6}>
-            <InputGroup>
-              <InputGroup.Text>🔍</InputGroup.Text>
-              <Form.Control
-                placeholder="Search templates..."
-                value={searchTerm}
-                onChange={onSearchChange}
-              />
-            </InputGroup>
-          </Col>
-          <Col md={6} className="text-end">
-            <Button variant="primary" onClick={onAddTemplate}>
-              + Add Template
-            </Button>
-          </Col>
-        </Row>
+        <div className="d-flex justify-content-end mb-4">
+          <Button variant="primary" onClick={onAddTemplate} className="me-3">
+            + Add Template
+          </Button>
+        </div>
+
+        <InputGroup className="mb-4">
+          <InputGroup.Text>🔍</InputGroup.Text>
+          <Form.Control
+            placeholder="Search by title, slug, or type..."
+            value={searchTerm}
+            onChange={onSearchChange}
+          />
+        </InputGroup>
+
+        {error && <Alert variant="danger">{error}</Alert>}
 
         <Card className="border-0 shadow-sm">
           <Card.Body>
-            {error && <Alert variant="danger">{error}</Alert>}
-
             {loading ? (
               <div className="text-center py-5">
                 <Spinner animation="border" />
               </div>
             ) : filteredTemplates.length > 0 ? (
-              <ListGroup>
-                {filteredTemplates.map((template) => (
-                  <ListGroup.Item key={template.id}>
-                    <Row>
-                      <Col>
-                        <strong>Title:</strong> {template.title} <br />
-                        <strong>Slug:</strong> {template.slug} <br />
-                        <strong>Type:</strong> {template.type}
-                      </Col>
-                      <Col md="auto" className="text-end">
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={() => onDeleteClick(template.id)}
-                        >
-                          Delete
-                        </Button>
-                      </Col>
-                    </Row>
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
+              <div className="table-responsive">
+                <Table hover responsive className="align-middle">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Slug</th>
+                      <th>Type</th>
+                      <th className="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredTemplates.map((template) => (
+                      <tr key={template.id}>
+                        <td>{template.title}</td>
+                        <td>{template.slug}</td>
+                        <td>{template.type}</td>
+                        <td className="text-end">
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => onDeleteClick(template.id)}
+                          >
+                            Delete
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
             ) : (
               <Alert variant="info">
                 {searchTerm
@@ -108,19 +111,20 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
           </Card.Body>
         </Card>
 
-        <Modal show={showDeleteModal} onHide={onCloseDeleteModal}>
+        <Modal show={showDeleteModal} onHide={onCloseDeleteModal} centered>
           <Modal.Header closeButton>
-            <Modal.Title>Confirm Delete</Modal.Title>
+            <Modal.Title>Delete Template</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            Are you sure you want to delete this template?
+            Are you sure you want to delete this template? This action cannot be
+            undone.
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={onCloseDeleteModal}>
               Cancel
             </Button>
             <Button variant="danger" onClick={onDeleteConfirm}>
-              Delete
+              Confirm Delete
             </Button>
           </Modal.Footer>
         </Modal>

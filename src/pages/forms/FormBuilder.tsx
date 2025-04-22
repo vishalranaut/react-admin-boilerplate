@@ -45,7 +45,7 @@ const FormBuilder: React.FC<Props> = ({
       case "email":
         return <Form.Control type={field.type} {...commonProps} />;
       case "textarea":
-        return <Form.Control as="textarea" {...commonProps} />;
+        return <Form.Control as="textarea" rows={4} {...commonProps} />;
       case "select":
         return (
           <Form.Control as="select" {...commonProps}>
@@ -64,42 +64,48 @@ const FormBuilder: React.FC<Props> = ({
 
   return (
     <MainLayout title="Form Builder">
-      <Card>
+      <Card className="shadow-sm border-0">
         <Card.Body>
-          <form onSubmit={onSubmit}>
-            <h2>{isEditMode ? "Edit" : "Create"} Form</h2>
-            {error && <Alert variant="danger">{error}</Alert>}
-            {loading ? (
-              <Spinner animation="border" />
-            ) : (
-              <>
-                <Form.Group>
-                  <Form.Control
-                    type="text"
-                    value={formData.name}
-                    onChange={onNameChange}
-                    required
-                  />
+          {error && <Alert variant="danger">{error}</Alert>}
+
+          {loading ? (
+            <div className="text-center py-5">
+              <Spinner animation="border" variant="primary" />
+            </div>
+          ) : (
+            <Form onSubmit={onSubmit}>
+              <Form.Group className="mb-4" controlId="formName">
+                <Form.Label>Form Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter form name"
+                  value={formData.name}
+                  onChange={onNameChange}
+                  required
+                />
+              </Form.Group>
+
+              {formData.fields.map((field) => (
+                <Form.Group
+                  className="mb-4"
+                  key={field.id}
+                  controlId={field.id}
+                >
+                  <Form.Label>{field.label}</Form.Label>
+                  {renderField(field)}
                 </Form.Group>
+              ))}
 
-                {formData.fields.map((field) => (
-                  <Form.Group key={field.id} controlId={field.id}>
-                    <Form.Label>{field.label}</Form.Label>
-                    {renderField(field)}
-                  </Form.Group>
-                ))}
-
-                <div className="d-flex justify-content-between mt-3">
-                  <Button type="submit" variant="primary">
-                    {isEditMode ? "Update" : "Create"}
-                  </Button>
-                  <Button variant="secondary" onClick={onCancel}>
-                    Cancel
-                  </Button>
-                </div>
-              </>
-            )}
-          </form>
+              <div className="d-flex justify-content-end gap-2 mt-4">
+                <Button variant="secondary" onClick={onCancel}>
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary">
+                  {isEditMode ? "Update" : "Create"}
+                </Button>
+              </div>
+            </Form>
+          )}
         </Card.Body>
       </Card>
     </MainLayout>
