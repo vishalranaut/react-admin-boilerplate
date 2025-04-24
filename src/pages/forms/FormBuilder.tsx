@@ -38,6 +38,7 @@ const FormBuilder: React.FC<Props> = ({
       required: field.required,
       onChange: (e: React.ChangeEvent<any>) =>
         onChange(e, field.id, field.type),
+      placeholder: `Enter ${field.label.toLowerCase()}`,
     };
 
     switch (field.type) {
@@ -58,12 +59,14 @@ const FormBuilder: React.FC<Props> = ({
           </Form.Control>
         );
       default:
-        return null;
+        return <div className="text-muted">Unsupported field type</div>;
     }
   };
 
   return (
-    <MainLayout title="Form Builder">
+    <MainLayout
+      title={isEditMode ? `Edit: ${formData.name}` : "Create New Form"}
+    >
       <Card className="shadow-sm border-0">
         <Card.Body>
           {error && <Alert variant="danger">{error}</Alert>}
@@ -91,7 +94,12 @@ const FormBuilder: React.FC<Props> = ({
                   key={field.id}
                   controlId={field.id}
                 >
-                  <Form.Label>{field.label}</Form.Label>
+                  <Form.Label>
+                    {field.label}
+                    {field.required && (
+                      <span className="text-danger ms-1">*</span>
+                    )}
+                  </Form.Label>
                   {renderField(field)}
                 </Form.Group>
               ))}
@@ -101,7 +109,7 @@ const FormBuilder: React.FC<Props> = ({
                   Cancel
                 </Button>
                 <Button type="submit" variant="primary">
-                  {isEditMode ? "Update" : "Create"}
+                  {isEditMode ? "Update Form" : "Create Form"}
                 </Button>
               </div>
             </Form>

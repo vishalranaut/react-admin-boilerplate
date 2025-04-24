@@ -1,5 +1,6 @@
 import { ReactNode, useState } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
+import { Link, useLocation } from "react-router-dom";
 import NavigationBar from "../components/NavigationBar";
 import {
   LayoutDashboard,
@@ -19,10 +20,24 @@ interface MainLayoutProps {
 
 const MainLayout = ({ children, title }: MainLayoutProps) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const location = useLocation();
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
+
+  const navItems = [
+    {
+      to: "/dashboard",
+      icon: <LayoutDashboard size={18} />,
+      label: "Dashboard",
+    },
+    { to: "/users", icon: <Users size={18} />, label: "Users" },
+    { to: "/templates", icon: <FileText size={18} />, label: "Templates" },
+    { to: "/menus", icon: <List size={18} />, label: "Menus" },
+    { to: "/forms", icon: <ClipboardList size={18} />, label: "Forms" },
+    { to: "/settings", icon: <Settings size={18} />, label: "Settings" },
+  ];
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -49,60 +64,22 @@ const MainLayout = ({ children, title }: MainLayoutProps) => {
           <br />
 
           <ul className="nav nav-pills flex-column mb-auto">
-            <li className="nav-item">
-              <a
-                href="/dashboard"
-                className="nav-link text-white d-flex align-items-center gap-2"
-              >
-                <LayoutDashboard size={18} />
-                {!sidebarCollapsed && "Dashboard"}
-              </a>
-            </li>
-            <li>
-              <a
-                href="/users"
-                className="nav-link text-white d-flex align-items-center gap-2"
-              >
-                <Users size={18} />
-                {!sidebarCollapsed && "Users"}
-              </a>
-            </li>
-            <li>
-              <a
-                href="/templates"
-                className="nav-link text-white d-flex align-items-center gap-2"
-              >
-                <FileText size={18} />
-                {!sidebarCollapsed && "Templates"}
-              </a>
-            </li>
-            <li>
-              <a
-                href="/menus"
-                className="nav-link text-white d-flex align-items-center gap-2"
-              >
-                <List size={18} />
-                {!sidebarCollapsed && "Menus"}
-              </a>
-            </li>
-            <li>
-              <a
-                href="/forms"
-                className="nav-link text-white d-flex align-items-center gap-2"
-              >
-                <ClipboardList size={18} />
-                {!sidebarCollapsed && "Forms"}
-              </a>
-            </li>
-            <li>
-              <a
-                href="/settings"
-                className="nav-link text-white d-flex align-items-center gap-2"
-              >
-                <Settings size={18} />
-                {!sidebarCollapsed && "Settings"}
-              </a>
-            </li>
+            {navItems.map(({ to, icon, label }) => {
+              const isActive = location.pathname.startsWith(to);
+              return (
+                <li key={to} className="nav-item">
+                  <Link
+                    to={to}
+                    className={`nav-link d-flex align-items-center gap-2 ${
+                      isActive ? "active text-white bg-primary" : "text-white"
+                    }`}
+                  >
+                    {icon}
+                    {!sidebarCollapsed && label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
 
